@@ -1,11 +1,11 @@
 class Expense {
   String amount;
-  String extraTags;
+  List<String> extraTags;
   bool isFuturistic;
   bool isLeisure;
   bool isExpected;
   bool isRecurring;
-  DateTime date;
+  String date;
   String email;
   String typeOfExpense;
   String individualOrFamily;

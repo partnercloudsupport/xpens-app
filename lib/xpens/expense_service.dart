@@ -3,20 +3,20 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:xpens/xpens/expense.dart';
 
-import 'contact.dart';
-
-class ContactService {
-  static const _serviceUrl = 'http://mockbin.org/echo/abc';
+class ExpenseService {
+  static const _serviceUrl = 'http://192.168.1.14:8080/expenses/add';
   static final _headers = {'Content-Type': 'application/json'};
 
-  Future<Contact> createContact(Contact contact) async {
+  Future<Expense> createExpense(Expense expense) async {
     try {
-      String json = _toJson(contact);
+      String json = _toJson(expense);
       final response =
-          await http.post(_serviceUrl, headers: _headers, body: json);
-      var c = _fromJson(response.body);
-      return c;
+          await http.put(_serviceUrl, headers: _headers, body: json);
+      var e = _fromJson(response.body);
+      print('response: $e');
+      return e;
     } catch (e) {
       print('Server Exception!!!');
       print(e);
@@ -24,25 +24,42 @@ class ContactService {
     }
   }
 
-  Contact _fromJson(String jsonContact) {
-    Map<String, dynamic> map = json.decode(jsonContact);
-    var contact = new Contact();
-    contact.name = map['name'];
-    contact.dob = new DateFormat.yMd().parseStrict(map['dob']);
-    contact.phone = map['phone'];
-    contact.email = map['email'];
-    contact.email = map['favoriteColor'];
-    return contact;
+  Expense _fromJson(String jsonExpense) {
+    Map<String, dynamic> map = json.decode(jsonExpense);
+    var expense = new Expense();
+    expense.extraTags = map['extraTags'];
+    expense.isRecurring = map['isRecurring'];
+    expense.typeOfExpense = map['typeOfExpense'];
+    expense.amount = map['amount'];
+    expense.date = map['localDate'];
+    expense.isExpected = map['isExpected'];
+    expense.isFuturistic = map['isFuturistic'];
+    expense.isLeisure = map['isLeisure'];
+    expense.email = map['userEmail'];
+    expense.individualOrFamily = map['levelOfExpense'];
+
+    //contact.dob = new DateFormat.yMd().parseStrict(map['dob']);
+    return expense;
   }
 
-  String _toJson(Contact contact) {
+  String _toJson(Expense expense) {
     var mapData = new Map();
-    mapData["name"] = contact.name;
-    mapData["dob"] = new DateFormat.yMd().format(contact.dob);
-    mapData["phone"] = contact.phone;
-    mapData["email"] = contact.email;
-    mapData["favoriteColor"] = contact.favoriteColor;
-    String jsonContact = json.encode(mapData);
-    return jsonContact;
+    mapData["amount"] = expense.amount;
+    //mapData["dob"] = new DateFormat.yMd().format(contact.dob);
+    mapData["userEmail"] = "send2tanmay@gmail.com";
+    mapData["localDate"] =
+        (expense.date == null || expense.date.trim().length <= 0)
+            ? new DateFormat('EEE, M/d/y').format(DateTime.now())
+            : expense.date;
+    mapData["isExpected"] = expense.isExpected;
+    mapData["isFuturistic"] = expense.isFuturistic;
+    mapData["isLeisure"] = expense.isLeisure;
+    mapData["isRecurring"] = expense.isRecurring;
+    mapData["typeOfExpense"] = expense.typeOfExpense;
+    mapData["extraTags"] = expense.extraTags;
+    mapData["levelOfExpense"] = expense.individualOrFamily;
+
+    String jsonExpense = json.encode(mapData);
+    return jsonExpense;
   }
 }

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
-import 'contact_service.dart';
 import 'expense.dart';
+import 'expense_service.dart';
 
 void main() => runApp(new MyApp());
 
@@ -38,11 +38,12 @@ class _MyHomePageState extends State<MyHomePage> {
   List<String> _expenseTypes = <String>[
     '',
     'Grocery',
-    'Entertainment',
     'Utility',
     'Household',
     'Travel',
     'Health',
+    'Entertainment',
+    'Electronics',
     'Personal',
     'Miscellaneous',
   ];
@@ -69,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (result == null) return;
 
     setState(() {
-      _controller.text = new DateFormat.yMd().format(result);
+      _controller.text = new DateFormat('EEE, M/d/y').format(result);
     });
   }
 
@@ -116,18 +117,20 @@ class _MyHomePageState extends State<MyHomePage> {
       showMessage('Form is not valid!  Please review and correct.');
     } else {
       form.save(); //This invokes each onSaved event
+      newExpense.isExpected = _expected;
+      newExpense.isFuturistic = _futuristic;
+      newExpense.isLeisure = _leisure;
+      newExpense.isRecurring = _recurring;
+      print('recurring : ${newExpense.isRecurring}');
+      print('leisure: ${newExpense.isLeisure}');
+      print('futuristic: ${newExpense.isFuturistic}');
+      print('expected: ${newExpense.isExpected}');
 
-      print('Form save called, newContact is now up to date...');
-      print('Email: ${newContact.name}');
-      print('Dob: ${newContact.dob}');
-      print('Phone: ${newContact.phone}');
-      print('Email: ${newContact.email}');
-      print('Favorite Color: ${newContact.favoriteColor}');
-      print('========================================');
-      print('Submitting to back end...');
-      var contactService = new ContactService();
-      contactService.createContact(newContact).then((value) =>
-          showMessage('New contact created for ${value.name}!', Colors.blue));
+      newExpense.individualOrFamily =
+          (radioValue == 0) ? 'Individual' : 'Family';
+      var expenseService = new ExpenseService();
+      expenseService.createExpense(newExpense).then(
+          (value) => showMessage('Success: New expense created!', Colors.blue));
     }
   }
 
@@ -175,29 +178,33 @@ class _MyHomePageState extends State<MyHomePage> {
                   //DATE text field and a button to select date
                   new Row(children: <Widget>[
                     new Expanded(
-                        child: new TextFormField(
-                      decoration: new InputDecoration(
-                        icon: const Icon(
-                          Icons.calendar_today,
-                          color: Colors.blue,
-                        ),
-                        labelText: 'Date of Expense',
-                      ),
-                      enabled: false,
-                      controller: _controller,
-                      keyboardType: TextInputType.datetime,
-                      validator: (val) =>
-                          isValidDob(val) ? null : 'Not a valid date',
-                      onSaved: (val) => newExpense.date = convertToDate(val),
-                    )),
+                      child: new TextFormField(
+                          decoration: new InputDecoration(
+                            icon: const Icon(
+                              Icons.calendar_today,
+                              color: Colors.blue,
+                            ),
+                            labelText: 'Date of Expense',
+                          ),
+                          enabled: false,
+                          controller: _controller,
+                          keyboardType: TextInputType.datetime,
+                          validator: (val) =>
+                              isValidDob(val) ? null : 'Not a valid date',
+                          onSaved: (val) => newExpense.date = val),
+                    ),
                     new RaisedButton(
-                      textTheme: ButtonTextTheme.accent,
+                      textTheme: ButtonTextTheme.normal,
                       materialTapTargetSize: MaterialTapTargetSize.padded,
+                      color: Colors.blue,
                       shape: RoundedRectangleBorder(
                           side: BorderSide(color: Colors.blue),
-                          borderRadius: BorderRadius.circular(2)),
+                          borderRadius: BorderRadius.circular(15)),
                       elevation: 1,
-                      child: Text("Pick Date"),
+                      child: Text(
+                        "Pick Date",
+                        style: TextStyle(color: Colors.white),
+                      ),
                       onPressed: (() {
                         _chooseDate(context, _controller.text);
                       }),
@@ -222,9 +229,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             isDense: true,
                             onChanged: (String newValue) {
                               setState(() {
-                                newExpense.typeOfExpense = newValue;
                                 _type = newValue;
                                 state.didChange(newValue);
+                                newExpense.typeOfExpense = newValue;
                               });
                             },
                             items: _expenseTypes.map((String value) {
@@ -238,7 +245,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       );
                     },
                     validator: (val) {
-                      return val != '' ? null : 'Please select type';
+                      return (val != '' && val != null)
+                          ? null
+                          : 'Please select type';
                     },
                   ),
                   Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
@@ -301,7 +310,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       hintText: 'Add comma separated tags',
                       labelText: 'Tags',
                     ),
-                    onSaved: (val) => newExpense.extraTags = val,
+                    onSaved: (val) =>
+                        newExpense.extraTags = handleExtraTags(val),
                   ),
                   Container(
                       padding: const EdgeInsets.only(left: 40.0, top: 20.0),
@@ -312,6 +322,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ))),
     );
+  }
+
+  List<String> handleExtraTags(String val) {
+    if (val != null) {
+      return val
+          .split(",")
+          .map((s) => s.trim().toLowerCase())
+          .toSet()
+          .toList(growable: true);
+    }
+    return new List<String>();
   }
 
   void handleRadioValueChanged(int value) {
