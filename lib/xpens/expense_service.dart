@@ -6,7 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:xpens/xpens/expense.dart';
 
 class ExpenseService {
-  static const _serviceUrl = 'http://192.168.1.14:8080/expenses/add';
+  //static const _serviceUrl = 'http://192.168.1.14:8080/expenses/add';
+  static const _serviceUrl =
+      'https://9a54449d.ngrok.io/xpens-manage/expenses/add';
   static final _headers = {'Content-Type': 'application/json'};
 
   Future<Expense> createExpense(Expense expense) async {

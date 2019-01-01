@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   DateTime convertToDate(String input) {
     try {
-      var d = new DateFormat.yMd().parseStrict(input);
+      var d = new DateFormat('EEE, M/d/y').parseStrict(input);
       return d;
     } catch (e) {
       return null;
@@ -121,10 +121,12 @@ class _MyHomePageState extends State<MyHomePage> {
       newExpense.isFuturistic = _futuristic;
       newExpense.isLeisure = _leisure;
       newExpense.isRecurring = _recurring;
+      newExpense.date = _controller.text;
       print('recurring : ${newExpense.isRecurring}');
       print('leisure: ${newExpense.isLeisure}');
       print('futuristic: ${newExpense.isFuturistic}');
       print('expected: ${newExpense.isExpected}');
+      print('date: ${newExpense.date}');
 
       newExpense.individualOrFamily =
           (radioValue == 0) ? 'Individual' : 'Family';
@@ -230,8 +232,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             onChanged: (String newValue) {
                               setState(() {
                                 _type = newValue;
-                                state.didChange(newValue);
                                 newExpense.typeOfExpense = newValue;
+                                state.didChange(newValue);
                               });
                             },
                             items: _expenseTypes.map((String value) {
