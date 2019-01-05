@@ -312,7 +312,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ]),
                   ),
                   SwitchListTile.adaptive(
-                    value: _expected,
+                    value: true,
                     onChanged: (bool newValue) {
                       setState(() {
                         _expected = newValue;
