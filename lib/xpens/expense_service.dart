@@ -22,7 +22,7 @@ class ExpenseService {
     } catch (e) {
       print('Server Exception!!!');
       print(e);
-      return null;
+      return e;
     }
   }
 

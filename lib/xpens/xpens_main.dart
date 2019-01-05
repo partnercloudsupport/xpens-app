@@ -156,18 +156,27 @@ class _MyHomePageState extends State<MyHomePage> {
               key: _formKey,
               autovalidate: true,
               child: new ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.all(25),
                 children: <Widget>[
                   //amount field
-                  new TextFormField(
+                  TextFormField(
                     decoration: const InputDecoration(
-                      icon: const Icon(
-                        Icons.attach_money,
-                        color: Colors.blue,
-                        size: 30,
+                      prefix: Text(
+                        "\$ ",
+                        style: TextStyle(
+                            color: Colors.blueGrey,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
                       ),
                       hintText: 'Enter expense amount',
                       labelText: 'Amount',
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 10,
+                          color: Colors.blue,
+                          style: BorderStyle.solid,
+                        ),
+                      ),
                     ),
                     keyboardType:
                         TextInputType.numberWithOptions(decimal: true),
@@ -177,16 +186,21 @@ class _MyHomePageState extends State<MyHomePage> {
                         : 'Amount invalid. Only 2 digits after decimal.',
                     onSaved: (val) => newExpense.amount = val,
                   ),
+                  Padding(padding: EdgeInsets.all(5)),
                   //DATE text field and a button to select date
-                  new Row(children: <Widget>[
-                    new Expanded(
-                      child: new TextFormField(
-                          decoration: new InputDecoration(
-                            icon: const Icon(
-                              Icons.calendar_today,
-                              color: Colors.blue,
-                            ),
+                  Row(children: <Widget>[
+                    Expanded(
+                      child: TextFormField(
+                          decoration: InputDecoration(
                             labelText: 'Date of Expense',
+                            border: OutlineInputBorder(
+                              gapPadding: 4,
+                              borderSide: BorderSide(
+                                width: 10,
+                                color: Colors.blue,
+                                style: BorderStyle.solid,
+                              ),
+                            ),
                           ),
                           enabled: false,
                           controller: _controller,
@@ -195,10 +209,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               isValidDob(val) ? null : 'Not a valid date',
                           onSaved: (val) => newExpense.date = val),
                     ),
-                    new RaisedButton(
-                      textTheme: ButtonTextTheme.normal,
+                    Padding(padding: EdgeInsets.all(5)),
+                    RaisedButton(
+                      textTheme: ButtonTextTheme.primary,
                       materialTapTargetSize: MaterialTapTargetSize.padded,
-                      color: Colors.blue,
+                      color: Colors.lightBlue,
                       shape: RoundedRectangleBorder(
                           side: BorderSide(color: Colors.blue),
                           borderRadius: BorderRadius.circular(15)),
@@ -212,17 +227,22 @@ class _MyHomePageState extends State<MyHomePage> {
                       }),
                     )
                   ]),
+                  Padding(padding: EdgeInsets.all(5)),
                   //Type of Expense dropdown
-                  new FormField<String>(
+                  FormField<String>(
                     builder: (FormFieldState<String> state) {
                       return InputDecorator(
                         decoration: InputDecoration(
-                          icon: const Icon(
-                            Icons.category,
-                            color: Colors.blue,
-                          ),
                           labelText: 'Type of Expense',
                           errorText: state.hasError ? state.errorText : null,
+                          border: OutlineInputBorder(
+                            gapPadding: 4,
+                            borderSide: BorderSide(
+                              width: 10,
+                              color: Colors.blue,
+                              style: BorderStyle.solid,
+                            ),
+                          ),
                         ),
                         isEmpty: _type == '',
                         child: new DropdownButtonHideUnderline(
@@ -252,20 +272,45 @@ class _MyHomePageState extends State<MyHomePage> {
                           : 'Please select type';
                     },
                   ),
-                  Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                    Text("Individual"),
-                    Radio<int>(
-                      value: 0,
-                      groupValue: radioValue,
-                      onChanged: handleRadioValueChanged,
+                  Padding(padding: EdgeInsets.all(5)),
+                  Container(
+                    foregroundDecoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                          color: Colors.blueGrey,
+                          style: BorderStyle.solid,
+                          width: 1),
                     ),
-                    Text("Family"),
-                    Radio<int>(
-                      value: 1,
-                      groupValue: radioValue,
-                      onChanged: handleRadioValueChanged,
-                    ),
-                  ]),
+                    child:
+                        Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                      Padding(padding: EdgeInsets.all(25)),
+                      Text(
+                        "Individual",
+                        style: TextStyle(
+                            decorationStyle: TextDecorationStyle.solid,
+                            fontSize: 20),
+                      ),
+                      Radio<int>(
+                        value: 0,
+                        groupValue: radioValue,
+                        materialTapTargetSize: MaterialTapTargetSize.padded,
+                        onChanged: handleRadioValueChanged,
+                      ),
+                      Padding(padding: EdgeInsets.all(10)),
+                      Text(
+                        "Family",
+                        style: TextStyle(
+                            decorationStyle: TextDecorationStyle.solid,
+                            fontSize: 20),
+                      ),
+                      Radio<int>(
+                        value: 1,
+                        groupValue: radioValue,
+                        onChanged: handleRadioValueChanged,
+                      ),
+                    ]),
+                  ),
                   SwitchListTile.adaptive(
                     value: _expected,
                     onChanged: (bool newValue) {
@@ -302,12 +347,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                     title: Text("Recurring"),
                   ),
-                  new TextFormField(
+                  TextFormField(
                     decoration: const InputDecoration(
-                      icon: const Icon(
-                        Icons.style,
-                        color: Colors.blue,
-                        size: 30,
+                      border: OutlineInputBorder(
+                        gapPadding: 4,
+                        borderSide: BorderSide(
+                          width: 10,
+                          color: Colors.blue,
+                          style: BorderStyle.solid,
+                        ),
                       ),
                       hintText: 'Add comma separated tags',
                       labelText: 'Tags',
@@ -316,11 +364,22 @@ class _MyHomePageState extends State<MyHomePage> {
                         newExpense.extraTags = handleExtraTags(val),
                   ),
                   Container(
-                      padding: const EdgeInsets.only(left: 40.0, top: 20.0),
-                      child: new RaisedButton(
-                        child: const Text('Submit'),
-                        onPressed: _submitForm,
-                      )),
+                    padding: const EdgeInsets.only(left: 15.0, top: 20.0),
+                    child: RaisedButton(
+                      textTheme: ButtonTextTheme.normal,
+                      materialTapTargetSize: MaterialTapTargetSize.padded,
+                      color: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(15)),
+                      elevation: 1,
+                      child: const Text(
+                        "Submit",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: _submitForm,
+                    ),
+                  ),
                 ],
               ))),
     );
