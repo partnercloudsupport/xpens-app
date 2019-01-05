@@ -117,6 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
       showMessage('Form is not valid!  Please review and correct.');
     } else {
       form.save(); //This invokes each onSaved event
+
       newExpense.isExpected = _expected;
       newExpense.isFuturistic = _futuristic;
       newExpense.isLeisure = _leisure;
@@ -133,6 +134,26 @@ class _MyHomePageState extends State<MyHomePage> {
       var expenseService = new ExpenseService();
       expenseService.createExpense(newExpense).then(
           (value) => showMessage('Success: New expense created!', Colors.blue));
+      showDialog(
+        context: context,
+        builder: (_) => new Dialog(
+            insetAnimationCurve: ElasticInCurve(),
+            child: Container(
+              padding: EdgeInsets.all(50),
+              foregroundDecoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  shape: BoxShape.rectangle),
+              child: Text(
+                "Expense Added!!!",
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )),
+      );
+      _formKey.currentState.reset();
     }
   }
 
