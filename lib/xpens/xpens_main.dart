@@ -153,6 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             )),
       );
+      _type = '';
       _formKey.currentState.reset();
     }
   }
