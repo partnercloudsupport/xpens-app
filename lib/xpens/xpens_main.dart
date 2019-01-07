@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:xpens/xpens/commonwidgets/common_drawer.dart';
 
 import 'expense.dart';
 import 'expense_service.dart';
@@ -48,11 +49,18 @@ class _MyHomePageState extends State<MyHomePage> {
     'Miscellaneous',
   ];
   String _type = '';
+  bool _expected = true;
+  bool _leisure = false;
+  bool _futuristic = false;
+  bool _recurring = false;
+  int radioValue = 0;
 
   //Contact newContact = new Contact();
   Expense newExpense = new Expense();
-  final TextEditingController _controller = new TextEditingController();
-
+  final TextEditingController _controller = TextEditingController.fromValue(
+    TextEditingValue(
+        text: DateFormat('EEE, M/d/y').format(DateTime.now()).toString()),
+  );
   Future<Null> _chooseDate(
       BuildContext context, String initialDateString) async {
     var now = new DateTime.now();
@@ -158,219 +166,99 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  bool _expected = false;
-  bool _leisure = false;
-  bool _futuristic = false;
-  bool _recurring = false;
-  int radioValue = 0;
-
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       key: _scaffoldKey,
-      appBar: new AppBar(
-        title: new Text(widget.title),
+      drawer: CommonDrawer(),
+      appBar: AppBar(
+        title: Text(widget.title),
       ),
-      body: new SafeArea(
-          top: false,
-          bottom: false,
-          child: new Form(
-              key: _formKey,
-              autovalidate: true,
-              child: new ListView(
-                padding: const EdgeInsets.all(25),
-                children: <Widget>[
-                  //amount field
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      prefix: Text(
-                        "\$ ",
-                        style: TextStyle(
-                            color: Colors.blueGrey,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      hintText: 'Enter expense amount',
-                      labelText: 'Amount',
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          width: 10,
-                          color: Colors.blue,
-                          style: BorderStyle.solid,
-                        ),
-                      ),
-                    ),
-                    keyboardType:
-                        TextInputType.numberWithOptions(decimal: true),
-                    inputFormatters: [new LengthLimitingTextInputFormatter(9)],
-                    validator: (val) => isAmountValid(val)
-                        ? null
-                        : 'Amount invalid. Only 2 digits after decimal.',
-                    onSaved: (val) => newExpense.amount = val,
+      body: SafeArea(
+        top: false,
+        bottom: false,
+        child: new Form(
+          key: _formKey,
+          autovalidate: true,
+          child: new ListView(
+            padding: const EdgeInsets.all(25),
+            children: <Widget>[
+              //amount field
+              TextFormField(
+                decoration: const InputDecoration(
+                  prefix: Text(
+                    "\$ ",
+                    style: TextStyle(
+                        color: Colors.blueGrey,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
                   ),
-                  Padding(padding: EdgeInsets.all(5)),
-                  //DATE text field and a button to select date
-                  Row(children: <Widget>[
-                    Expanded(
-                      child: TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Date of Expense',
-                            border: OutlineInputBorder(
-                              gapPadding: 4,
-                              borderSide: BorderSide(
-                                width: 10,
-                                color: Colors.blue,
-                                style: BorderStyle.solid,
-                              ),
-                            ),
-                          ),
-                          enabled: false,
-                          controller: _controller,
-                          keyboardType: TextInputType.datetime,
-                          validator: (val) =>
-                              isValidDob(val) ? null : 'Not a valid date',
-                          onSaved: (val) => newExpense.date = val),
+                  hintText: 'Enter expense amount',
+                  labelText: 'Amount',
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 10,
+                      color: Colors.blue,
+                      style: BorderStyle.solid,
                     ),
-                    Padding(padding: EdgeInsets.all(5)),
-                    RaisedButton(
-                      textTheme: ButtonTextTheme.primary,
-                      materialTapTargetSize: MaterialTapTargetSize.padded,
-                      color: Colors.lightBlue,
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blue),
-                          borderRadius: BorderRadius.circular(15)),
-                      elevation: 1,
-                      child: Text(
-                        "Pick Date",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: (() {
-                        _chooseDate(context, _controller.text);
-                      }),
-                    )
-                  ]),
-                  Padding(padding: EdgeInsets.all(5)),
-                  //Type of Expense dropdown
-                  FormField<String>(
-                    builder: (FormFieldState<String> state) {
-                      return InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: 'Type of Expense',
-                          errorText: state.hasError ? state.errorText : null,
-                          border: OutlineInputBorder(
-                            gapPadding: 4,
-                            borderSide: BorderSide(
-                              width: 10,
-                              color: Colors.blue,
-                              style: BorderStyle.solid,
-                            ),
+                  ),
+                ),
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [new LengthLimitingTextInputFormatter(9)],
+                validator: (val) => isAmountValid(val)
+                    ? null
+                    : 'Amount invalid. Only 2 digits after decimal.',
+                onSaved: (val) => newExpense.amount = val,
+              ),
+              Padding(padding: EdgeInsets.all(5)),
+              //DATE text field and a button to select date
+              Row(children: <Widget>[
+                Expanded(
+                  child: TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Date of Expense',
+                        border: OutlineInputBorder(
+                          gapPadding: 4,
+                          borderSide: BorderSide(
+                            width: 10,
+                            color: Colors.blue,
+                            style: BorderStyle.solid,
                           ),
                         ),
-                        isEmpty: _type == '',
-                        child: new DropdownButtonHideUnderline(
-                          child: new DropdownButton<String>(
-                            value: _type,
-                            isDense: true,
-                            onChanged: (String newValue) {
-                              setState(() {
-                                _type = newValue;
-                                newExpense.typeOfExpense = newValue;
-                                state.didChange(newValue);
-                              });
-                            },
-                            items: _expenseTypes.map((String value) {
-                              return new DropdownMenuItem<String>(
-                                value: value,
-                                child: new Text(value),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      );
-                    },
-                    validator: (val) {
-                      return (val != '' && val != null)
-                          ? null
-                          : 'Please select type';
-                    },
-                  ),
-                  Padding(padding: EdgeInsets.all(5)),
-                  Container(
-                    foregroundDecoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                          color: Colors.blueGrey,
-                          style: BorderStyle.solid,
-                          width: 1),
-                    ),
-                    child:
-                        Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                      Padding(padding: EdgeInsets.all(25)),
-                      Text(
-                        "Individual",
-                        style: TextStyle(
-                            decorationStyle: TextDecorationStyle.solid,
-                            fontSize: 20),
                       ),
-                      Radio<int>(
-                        value: 0,
-                        groupValue: radioValue,
-                        materialTapTargetSize: MaterialTapTargetSize.padded,
-                        onChanged: handleRadioValueChanged,
-                      ),
-                      Padding(padding: EdgeInsets.all(10)),
-                      Text(
-                        "Family",
-                        style: TextStyle(
-                            decorationStyle: TextDecorationStyle.solid,
-                            fontSize: 20),
-                      ),
-                      Radio<int>(
-                        value: 1,
-                        groupValue: radioValue,
-                        onChanged: handleRadioValueChanged,
-                      ),
-                    ]),
+                      enabled: false,
+                      controller: _controller,
+                      keyboardType: TextInputType.datetime,
+                      validator: (val) =>
+                          isValidDob(val) ? null : 'Not a valid date',
+                      onSaved: (val) => newExpense.date = val),
+                ),
+                Padding(padding: EdgeInsets.all(5)),
+                RaisedButton(
+                  textTheme: ButtonTextTheme.primary,
+                  materialTapTargetSize: MaterialTapTargetSize.padded,
+                  color: Colors.lightBlue,
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.blue),
+                      borderRadius: BorderRadius.circular(15)),
+                  elevation: 1,
+                  child: Text(
+                    "Pick Date",
+                    style: TextStyle(color: Colors.white),
                   ),
-                  SwitchListTile.adaptive(
-                    value: true,
-                    onChanged: (bool newValue) {
-                      setState(() {
-                        _expected = newValue;
-                      });
-                    },
-                    title: Text("Expected"),
-                  ),
-                  SwitchListTile.adaptive(
-                    value: _futuristic,
-                    onChanged: (bool newValue) {
-                      setState(() {
-                        _futuristic = newValue;
-                      });
-                    },
-                    title: Text("Futuristic"),
-                  ),
-                  SwitchListTile.adaptive(
-                    value: _leisure,
-                    onChanged: (bool newValue) {
-                      setState(() {
-                        _leisure = newValue;
-                      });
-                    },
-                    title: Text("Leisure"),
-                  ),
-                  SwitchListTile.adaptive(
-                    value: _recurring,
-                    onChanged: (bool newValue) {
-                      setState(() {
-                        _recurring = newValue;
-                      });
-                    },
-                    title: Text("Recurring"),
-                  ),
-                  TextFormField(
-                    decoration: const InputDecoration(
+                  onPressed: (() {
+                    _chooseDate(context, _controller.text);
+                  }),
+                )
+              ]),
+              Padding(padding: EdgeInsets.all(5)),
+              //Type of Expense dropdown
+              FormField<String>(
+                builder: (FormFieldState<String> state) {
+                  return InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: 'Type of Expense',
+                      errorText: state.hasError ? state.errorText : null,
                       border: OutlineInputBorder(
                         gapPadding: 4,
                         borderSide: BorderSide(
@@ -379,31 +267,145 @@ class _MyHomePageState extends State<MyHomePage> {
                           style: BorderStyle.solid,
                         ),
                       ),
-                      hintText: 'Add comma separated tags',
-                      labelText: 'Tags',
                     ),
-                    onSaved: (val) =>
-                        newExpense.extraTags = handleExtraTags(val),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(left: 15.0, top: 20.0),
-                    child: RaisedButton(
-                      textTheme: ButtonTextTheme.normal,
-                      materialTapTargetSize: MaterialTapTargetSize.padded,
-                      color: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blue),
-                          borderRadius: BorderRadius.circular(15)),
-                      elevation: 1,
-                      child: const Text(
-                        "Submit",
-                        style: TextStyle(color: Colors.white),
+                    isEmpty: _type == '',
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _type,
+                        isDense: true,
+                        onChanged: (String newValue) {
+                          setState(() {
+                            _type = newValue;
+                            newExpense.typeOfExpense = newValue;
+                            state.didChange(newValue);
+                          });
+                        },
+                        items: _expenseTypes.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: new Text(value),
+                          );
+                        }).toList(),
                       ),
-                      onPressed: _submitForm,
+                    ),
+                  );
+                },
+                validator: (val) {
+                  return (val != '' && val != null)
+                      ? null
+                      : 'Please select type';
+                },
+              ),
+              Padding(padding: EdgeInsets.all(5)),
+              Container(
+                foregroundDecoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: Colors.blueGrey,
+                      style: BorderStyle.solid,
+                      width: 1),
+                ),
+                child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                  Padding(padding: EdgeInsets.all(25)),
+                  Text(
+                    "Individual",
+                    style: TextStyle(
+                        decorationStyle: TextDecorationStyle.solid,
+                        fontSize: 20),
+                  ),
+                  Radio<int>(
+                    value: 0,
+                    groupValue: radioValue,
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    onChanged: handleRadioValueChanged,
+                  ),
+                  Padding(padding: EdgeInsets.all(10)),
+                  Text(
+                    "Family",
+                    style: TextStyle(
+                        decorationStyle: TextDecorationStyle.solid,
+                        fontSize: 20),
+                  ),
+                  Radio<int>(
+                    value: 1,
+                    groupValue: radioValue,
+                    onChanged: handleRadioValueChanged,
+                  ),
+                ]),
+              ),
+              SwitchListTile.adaptive(
+                value: _expected,
+                onChanged: (bool newValue) {
+                  setState(() {
+                    _expected = newValue;
+                  });
+                },
+                title: Text("Expected"),
+              ),
+              SwitchListTile.adaptive(
+                value: _futuristic,
+                onChanged: (bool newValue) {
+                  setState(() {
+                    _futuristic = newValue;
+                  });
+                },
+                title: Text("Futuristic"),
+              ),
+              SwitchListTile.adaptive(
+                value: _leisure,
+                onChanged: (bool newValue) {
+                  setState(() {
+                    _leisure = newValue;
+                  });
+                },
+                title: Text("Leisure"),
+              ),
+              SwitchListTile.adaptive(
+                value: _recurring,
+                onChanged: (bool newValue) {
+                  setState(() {
+                    _recurring = newValue;
+                  });
+                },
+                title: Text("Recurring"),
+              ),
+              TextFormField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(
+                    gapPadding: 4,
+                    borderSide: BorderSide(
+                      width: 10,
+                      color: Colors.blue,
+                      style: BorderStyle.solid,
                     ),
                   ),
-                ],
-              ))),
+                  hintText: 'Add comma separated tags',
+                  labelText: 'Tags',
+                ),
+                onSaved: (val) => newExpense.extraTags = handleExtraTags(val),
+              ),
+              Container(
+                padding: const EdgeInsets.only(left: 15.0, top: 20.0),
+                child: RaisedButton(
+                  textTheme: ButtonTextTheme.normal,
+                  materialTapTargetSize: MaterialTapTargetSize.padded,
+                  color: Colors.blue,
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.blue),
+                      borderRadius: BorderRadius.circular(15)),
+                  elevation: 1,
+                  child: const Text(
+                    "Submit",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: _submitForm,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
