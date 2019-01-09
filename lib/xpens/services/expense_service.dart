@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:xpens/xpens/expense.dart';
+import 'package:xpens/xpens/models/expense.dart';
 
 class ExpenseService {
   //static const _serviceUrl = 'http://192.168.1.14:8080/expenses/add';

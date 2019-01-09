@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:xpens/xpens/expense.dart';
-import 'package:xpens/xpens/expense_service.dart';
+import 'package:xpens/xpens/models/expense.dart';
+import 'package:xpens/xpens/services/expense_service.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);

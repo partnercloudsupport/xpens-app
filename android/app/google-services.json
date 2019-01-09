@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "284920718114",
+    "firebase_url": "https://xpens02.firebaseio.com",
+    "project_id": "xpens02",
+    "storage_bucket": "xpens02.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:284920718114:android:23c34c37c0748642",
+        "android_client_info": {
+          "package_name": "manage.xpens.com.xpens"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "284920718114-2lojkj9d084ed0ktgm6e155l5dl7e9n6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "manage.xpens.com.xpens",
+            "certificate_hash": "69da03e91ae07c6ccf9b815afb73f8b1f6c6533d"
+          }
+        },
+        {
+          "client_id": "284920718114-i3ci2drjb2fb5l75d3jbeis8as6sem9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnUF3P7kvZkJkf4FElCXKkSdk2ZrAb1yQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "284920718114-i3ci2drjb2fb5l75d3jbeis8as6sem9i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

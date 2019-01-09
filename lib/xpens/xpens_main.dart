@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:xpens/xpens/tabs/add_expense_form.dart';
+import 'package:xpens/xpens/tabs/recent_expenses.dart';
 
 void main() => runApp(new MyApp());
 
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
           body: TabBarView(
             children: [
               MyHomePage(),
-              Icon(Icons.directions_transit),
+              RecentExpenses(),
               Icon(Icons.directions_bike),
             ],
           ),
