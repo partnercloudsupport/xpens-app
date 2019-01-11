@@ -7,15 +7,14 @@ import 'package:xpens/xpens/models/expense.dart';
 
 class ExpenseService {
   //static const _serviceUrl = 'http://192.168.1.14:8080/expenses/add';
-  static const _serviceUrl =
-      'https://9a54449d.ngrok.io/xpens-manage/expenses/add';
+  static const _serviceUrl = 'https://9a54449d.ngrok.io/xpens-manage/expenses';
   static final _headers = {'Content-Type': 'application/json'};
 
   Future<Expense> createExpense(Expense expense) async {
     try {
       String json = _toJson(expense);
       final response =
-          await http.put(_serviceUrl, headers: _headers, body: json);
+          await http.put(_serviceUrl + "/add", headers: _headers, body: json);
       var e = _fromJson(response.body);
       print('response: $e');
       return e;
@@ -26,21 +25,36 @@ class ExpenseService {
     }
   }
 
-  Expense _fromJson(String jsonExpense) {
-    Map<String, dynamic> map = json.decode(jsonExpense);
-    var expense = new Expense();
-    expense.extraTags = map['extraTags'];
-    expense.isRecurring = map['isRecurring'];
-    expense.typeOfExpense = map['typeOfExpense'];
-    expense.amount = map['amount'];
-    expense.date = map['localDate'];
-    expense.isExpected = map['isExpected'];
-    expense.isFuturistic = map['isFuturistic'];
-    expense.isLeisure = map['isLeisure'];
-    expense.email = map['userEmail'];
-    expense.individualOrFamily = map['levelOfExpense'];
+  /*Future<List<Expense>> getAllExpenses(String email) async {
+    try {
+      final response = await http.get(_serviceUrl + "/all", headers: _headers);
+      var e = _fromJson(response.body);
+      print('response: $e');
+      return (e as List).map((x) => _fromJson(x)).toList();
+    } catch (e) {
+      print('Server Exception!!!');
+      print(e);
+      return e;
+    }
+  }*/
 
-    //contact.dob = new DateFormat.yMd().parseStrict(map['dob']);
+  Future getExpensesForUser(String email) {
+    return http.get(_serviceUrl + "/all");
+  }
+
+  static Expense _fromJson(String jsonExpense) {
+    Map<String, dynamic> map = json.decode(jsonExpense);
+    var expense = new Expense(
+        map['amount'],
+        map['extraTags'],
+        map['isFuturistic'],
+        map['isLeisure'],
+        map['isExpected'],
+        map['isRecurring'],
+        map['localDate'],
+        map['userEmail'],
+        map['typeOfExpense'],
+        map['levelOfExpense']);
     return expense;
   }
 
@@ -48,7 +62,7 @@ class ExpenseService {
     var mapData = new Map();
     mapData["amount"] = expense.amount;
     //mapData["dob"] = new DateFormat.yMd().format(contact.dob);
-    mapData["userEmail"] = "send2tanmay@gmail.com";
+    mapData["userEmail"] = expense.email;
     mapData["localDate"] =
         (expense.date == null || expense.date.trim().length <= 0)
             ? new DateFormat('EEE, M/d/y').format(DateTime.now())

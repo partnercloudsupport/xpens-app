@@ -31,14 +31,18 @@ class _MyHomePageState extends State<MyHomePage> {
     'Miscellaneous',
   ];
   String _type = '';
+  String _date = '';
+  String _typeOfExpense;
+  List<String> _extraTags;
   bool _expected = true;
   bool _leisure = false;
   bool _futuristic = false;
   bool _recurring = false;
+  String _amount = '';
   int radioValue = 0;
 
   //Contact newContact = new Contact();
-  Expense newExpense = new Expense();
+  //Expense newExpense = new Expense();
   final TextEditingController _controller = TextEditingController.fromValue(
     TextEditingValue(
         text: DateFormat('EEE, M/d/y').format(DateTime.now()).toString()),
@@ -108,22 +112,34 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       form.save(); //This invokes each onSaved event
 
-      newExpense.isExpected = _expected;
+      /*  newExpense.isExpected = _expected;
       newExpense.isFuturistic = _futuristic;
       newExpense.isLeisure = _leisure;
       newExpense.isRecurring = _recurring;
       newExpense.date = _controller.text;
-      print('recurring : ${newExpense.isRecurring}');
+      */ /*print('recurring : ${newExpense.isRecurring}');
       print('leisure: ${newExpense.isLeisure}');
       print('futuristic: ${newExpense.isFuturistic}');
       print('expected: ${newExpense.isExpected}');
-      print('date: ${newExpense.date}');
+      print('date: ${newExpense.date}');*/ /*
 
       newExpense.individualOrFamily =
-          (radioValue == 0) ? 'Individual' : 'Family';
+          (radioValue == 0) ? 'Individual' : 'Family';*/
       var expenseService = new ExpenseService();
-      expenseService.createExpense(newExpense).then(
-          (value) => showMessage('Success: New expense created!', Colors.blue));
+      expenseService
+          .createExpense(new Expense(
+              _amount,
+              _extraTags,
+              _futuristic,
+              _leisure,
+              _expected,
+              _recurring,
+              _controller.text,
+              'send2tanmay@gmail.com',
+              _typeOfExpense,
+              (radioValue == 0) ? 'Individual' : 'Family'))
+          .then((value) =>
+              showMessage('Success: New expense created!', Colors.blue));
       showDialog(
         context: context,
         builder: (_) => new Dialog(
@@ -184,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
               validator: (val) => isAmountValid(val)
                   ? null
                   : 'Amount invalid. Only 2 digits after decimal.',
-              onSaved: (val) => newExpense.amount = val,
+              onSaved: (val) => _amount = val,
             ),
             Padding(padding: EdgeInsets.all(5)),
             //DATE text field and a button to select date
@@ -207,7 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     keyboardType: TextInputType.datetime,
                     validator: (val) =>
                         isValidDob(val) ? null : 'Not a valid date',
-                    onSaved: (val) => newExpense.date = val),
+                    onSaved: (val) => _date = val),
               ),
               Padding(padding: EdgeInsets.all(5)),
               RaisedButton(
@@ -252,7 +268,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onChanged: (String newValue) {
                         setState(() {
                           _type = newValue;
-                          newExpense.typeOfExpense = newValue;
+                          _typeOfExpense = newValue;
                           state.didChange(newValue);
                         });
                       },
@@ -353,7 +369,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 hintText: 'Add comma separated tags',
                 labelText: 'Tags',
               ),
-              onSaved: (val) => newExpense.extraTags = handleExtraTags(val),
+              onSaved: (val) => _extraTags = handleExtraTags(val),
             ),
             Container(
               padding: const EdgeInsets.only(left: 15.0, top: 20.0),
